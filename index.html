@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Accounting</title>
+    <title>Accounting - L1</title>
 
     <script src="questions.js"></script>
 
@@ -202,6 +202,21 @@
         box-shadow: 0 0 10px #6c757d;
       }
 
+      /* * * NEW CSS FOR NAV BUTTONS 
+      * */
+      a.quiz-button {
+        text-decoration: none;
+        text-align: center;
+        /* It will inherit padding, border, color, etc. from .quiz-button */
+      }
+      #back-btn:hover {
+        background-color: #6c757d;
+        color: var(--bg-color);
+        box-shadow: 0 0 10px #6c757d;
+      }
+      /* * * END OF NEW CSS 
+      * */
+
       /* Results */
       #results-container {
         text-align: center;
@@ -261,8 +276,21 @@
       <div id="results-container-wrapper" style="padding: 0 30px">
         <div id="results-container"></div>
       </div>
-    </div>
 
+      <div
+        class="button-container"
+        id="nav-buttons"
+        style="margin-top: 10px; padding-bottom: 30px"
+      >
+        <a
+          href="https://em1707.github.io/Accounting-L2/"
+          id="next-btn"
+          class="quiz-button"
+        >
+          Go to lecture 2 &raquo;
+        </a>
+      </div>
+    </div>
     <footer>&copy; 2025 Mostafa Gamal (EM1707). All rights reserved.</footer>
 
     <script>
@@ -346,7 +374,7 @@
       var submitButton = document.getElementById("submit-btn");
       var restartButton = document.getElementById("restart-btn");
       var resultsContainer = document.getElementById("results-container");
-      var allQuestionBlocks = null; // Will be populated after build
+      var allQuestionBlocks = null;
 
       // 4. SHOW THE RESULTS
       function showResults() {
@@ -363,12 +391,7 @@
           var selectedOption = document.querySelector(selector);
 
           if (selectedOption) {
-            // **************************
-            // *** THIS IS THE BUG FIX: ***
-            // It should be .parentElement (the <li>)
-            // NOT .parentElement.parentElement (the <ul>)
-            var selectedLi = selectedOption.parentElement; // This is the <li>
-            // **************************
+            var selectedLi = selectedOption.parentElement;
 
             if (userInput === currentQuestion.correctAnswer) {
               numCorrect++;
@@ -469,3 +492,5 @@
     </script>
   </body>
 </html>
+
+
