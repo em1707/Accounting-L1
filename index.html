@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Accounting</title>
+
+    <script src="questions.js"></script>
+
+    <style>
+      /* * FUTURISTIC UI STYLE 
+         */
+
+      :root {
+        --primary-color: #00f0ff; /* Neon Cyan */
+        --secondary-color: #00bfff; /* Deep Sky Blue */
+        --bg-color: #0a0c10; /* Near Black */
+        --panel-bg: #10141c; /* Dark Panel Blue */
+        --panel-border: rgba(0, 240, 255, 0.2);
+        --glow-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+
+        --text-color: #e0e0e0;
+        --text-muted: #888;
+
+        --success-green: #00ff7f; /* Neon Green */
+        --success-bg: rgba(0, 255, 127, 0.1);
+        --danger-red: #ff4136; /* Bright Red */
+        --danger-bg: rgba(255, 65, 54, 0.1);
+
+        --border-radius: 4px;
+      }
+
+      body {
+        font-family: "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+        line-height: 1.6;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 20px auto;
+        background: var(--panel-bg);
+        border: 1px solid var(--panel-border);
+        border-radius: var(--border-radius);
+        box-shadow: var(--glow-shadow);
+        overflow: hidden;
+      }
+
+      /* Header */
+      header {
+        background-color: var(--panel-bg);
+        color: var(--primary-color);
+        padding: 25px 30px;
+        text-align: center;
+        border-bottom: 1px solid var(--panel-border);
+        text-shadow: 0 0 5px var(--primary-color);
+      }
+      header h1 {
+        margin: 0;
+        font-size: 1.8em;
+        font-weight: 600;
+      }
+
+      /* Summary Block */
+      .summary-block {
+        padding: 30px;
+        background: transparent;
+        border-bottom: 1px solid var(--panel-border);
+      }
+      .summary-block h2 {
+        margin-top: 0;
+        color: var(--primary-color);
+        font-weight: 600;
+      }
+      .summary-block p {
+        font-size: 1.1em;
+        margin-bottom: 0;
+        color: var(--text-color);
+      }
+      .summary-block strong {
+        color: var(--secondary-color);
+        font-weight: 600;
+      }
+
+      /* Quiz Container */
+      #quiz-container {
+        padding: 30px;
+      }
+
+      .question-block {
+        margin-bottom: 25px;
+        padding-bottom: 25px;
+        border-bottom: 1px dashed var(--panel-border);
+      }
+      .question-block:last-of-type {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 10px;
+      }
+
+      .question-text {
+        font-size: 1.2em;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: #fff;
+      }
+
+      .options-list {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+      }
+      .options-list li {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid #333;
+        border-radius: var(--border-radius);
+        padding: 12px 15px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+      }
+      .options-list li:hover {
+        background-color: rgba(0, 240, 255, 0.1);
+        border-color: var(--secondary-color);
+      }
+      .options-list input[type="radio"] {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .options-list label {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        color: var(--text-color);
+        /* Make label fill the li */
+        width: 100%;
+      }
+      /* Custom radio button */
+      .options-list label::before {
+        content: "";
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        margin-right: 12px;
+        border: 2px solid #555;
+        border-radius: 50%;
+        background-color: #222;
+        flex-shrink: 0;
+        transition: all 0.2s;
+      }
+      .options-list input[type="radio"]:checked + label::before {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 2px var(--panel-bg) inset,
+          0 0 5px var(--primary-color);
+      }
+
+      /* Submit/Restart Buttons */
+      .button-container {
+        padding: 0 30px 30px 30px;
+        display: flex;
+        gap: 10px;
+      }
+      .quiz-button {
+        background-color: transparent;
+        color: var(--secondary-color);
+        font-family: "Courier New", Courier, monospace;
+        font-size: 1.1em;
+        font-weight: bold;
+        text-transform: uppercase;
+        padding: 14px 25px;
+        border: 2px solid var(--secondary-color);
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        width: 100%;
+        transition: all 0.2s;
+      }
+      .quiz-button:hover {
+        background-color: var(--secondary-color);
+        color: var(--bg-color);
+        box-shadow: 0 0 10px var(--secondary-color);
+      }
+      .quiz-button:disabled {
+        border-color: #444;
+        color: #444;
+        background: transparent;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+      #restart-btn {
+        border-color: #6c757d;
+        color: #6c757d;
+        display: none; /* Hide by default */
+      }
+      #restart-btn:hover {
+        background-color: #6c757d;
+        color: var(--bg-color);
+        box-shadow: 0 0 10px #6c757d;
+      }
+
+      /* Results */
+      #results-container {
+        text-align: center;
+        font-size: 1.4em;
+        font-weight: 600;
+        margin-top: 25px;
+        padding: 20px;
+        border-radius: var(--border-radius);
+      }
+
+      /* Answer Styling */
+      .correct {
+        background-color: var(--success-bg) !important;
+        border-color: var(--success-green) !important;
+      }
+      .correct-answer-reveal {
+        background-color: rgba(0, 255, 127, 0.05);
+        border-color: var(--success-green);
+      }
+      .incorrect {
+        background-color: var(--danger-bg) !important;
+        border-color: var(--danger-red) !important;
+      }
+      .explanation {
+        font-size: 0.9em;
+        color: var(--danger-red);
+        margin-top: 10px;
+        padding: 10px;
+        background-color: rgba(255, 65, 54, 0.05);
+        border: 1px solid var(--danger-bg);
+        border-radius: 5px;
+      }
+
+      /* Footer */
+      footer {
+        text-align: center;
+        padding: 20px;
+        font-size: 0.9em;
+        color: var(--text-muted);
+        font-family: "Courier New", Courier, monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Accounting: lecture 1</h1>
+      </header>
+
+      <main id="quiz-container"></main>
+
+      <div class="button-container">
+        <button id="submit-btn" class="quiz-button">Check Answers</button>
+        <button id="restart-btn" class="quiz-button">Restart Quiz</button>
+      </div>
+
+      <div id="results-container-wrapper" style="padding: 0 30px">
+        <div id="results-container"></div>
+      </div>
+    </div>
+
+    <footer>&copy; 2025 Mostafa Gamal (EM1707). All rights reserved.</footer>
+
+    <script>
+      // NOTE: The 'quizSections' variable is now loaded from 'questions.js'
+
+      // Global array to hold all questions for easy checking
+      var allQuestions = [];
+      var globalQuestionIndex = 0;
+
+      // 2. BUILD THE QUIZ HTML
+      var quizContainer = document.getElementById("quiz-container");
+
+      function buildQuiz() {
+        // Check if quizSections is loaded
+        if (typeof quizSections === "undefined") {
+          quizContainer.innerHTML =
+            "<p style='color: var(--danger-red);'>Error: Could not load questions. Make sure 'questions.js' is in the same folder.</p>";
+          return;
+        }
+
+        quizSections.forEach(function (section) {
+          // Create and append the summary block
+          var summaryBlock = document.createElement("div");
+          summaryBlock.classList.add("summary-block");
+          summaryBlock.innerHTML =
+            "<h2>" + section.title + "</h2><p>" + section.summary + "</p>";
+          quizContainer.appendChild(summaryBlock);
+
+          // Loop through questions in this section
+          section.questions.forEach(function (currentQuestion) {
+            // Add question to global array
+            allQuestions.push(currentQuestion);
+
+            var questionBlock = document.createElement("div");
+            questionBlock.classList.add("question-block");
+
+            var questionText = document.createElement("div");
+            questionText.classList.add("question-text");
+            questionText.innerText = currentQuestion.question;
+            questionBlock.appendChild(questionText);
+
+            var optionsList = document.createElement("ul");
+            optionsList.classList.add("options-list");
+
+            for (var letter in currentQuestion.options) {
+              var optionItem = document.createElement("li");
+
+              var radioInput = document.createElement("input");
+              radioInput.type = "radio";
+              radioInput.name = "question" + globalQuestionIndex;
+              radioInput.value = letter;
+              radioInput.id = "q" + globalQuestionIndex + letter;
+
+              var radioLabel = document.createElement("label");
+              radioLabel.htmlFor = "q" + globalQuestionIndex + letter;
+              radioLabel.innerText = currentQuestion.options[letter];
+
+              optionItem.appendChild(radioInput);
+              optionItem.appendChild(radioLabel);
+
+              // Add click listener to the entire <li> box
+              optionItem.addEventListener("click", function (event) {
+                var innerRadio = this.querySelector('input[type="radio"]');
+                if (innerRadio) {
+                  innerRadio.checked = true;
+                }
+              });
+
+              optionsList.appendChild(optionItem);
+            }
+
+            questionBlock.appendChild(optionsList);
+            quizContainer.appendChild(questionBlock);
+
+            globalQuestionIndex++;
+          });
+        });
+      }
+
+      // 3. GET REFERENCES TO BUTTONS AND CONTAINERS
+      var submitButton = document.getElementById("submit-btn");
+      var restartButton = document.getElementById("restart-btn");
+      var resultsContainer = document.getElementById("results-container");
+      var allQuestionBlocks = null; // Will be populated after build
+
+      // 4. SHOW THE RESULTS
+      function showResults() {
+        var numCorrect = 0;
+        if (!allQuestionBlocks) {
+          allQuestionBlocks = document.querySelectorAll(".question-block");
+        }
+
+        allQuestions.forEach(function (currentQuestion, questionNumber) {
+          var questionBlock = allQuestionBlocks[questionNumber];
+          var selector = "input[name=question" + questionNumber + "]:checked";
+          var userInput = (document.querySelector(selector) || {}).value;
+
+          var selectedOption = document.querySelector(selector);
+
+          if (selectedOption) {
+            // **************************
+            // *** THIS IS THE BUG FIX: ***
+            // It should be .parentElement (the <li>)
+            // NOT .parentElement.parentElement (the <ul>)
+            var selectedLi = selectedOption.parentElement; // This is the <li>
+            // **************************
+
+            if (userInput === currentQuestion.correctAnswer) {
+              numCorrect++;
+              selectedLi.classList.add("correct");
+            } else {
+              selectedLi.classList.add("incorrect");
+
+              // Show explanation
+              var explanationDiv = document.createElement("div");
+              explanationDiv.classList.add("explanation");
+              explanationDiv.innerHTML =
+                "<strong>Incorrect:</strong> " + currentQuestion.explanation;
+              selectedLi.appendChild(explanationDiv);
+
+              // Also find and highlight the *actual* correct answer
+              var correctOption = document.getElementById(
+                "q" + questionNumber + currentQuestion.correctAnswer
+              );
+              correctOption.parentElement.classList.add(
+                "correct-answer-reveal"
+              );
+            }
+          }
+        });
+
+        // Display the final score
+        resultsContainer.innerHTML =
+          "You got " +
+          numCorrect +
+          " out of " +
+          allQuestions.length +
+          " correct!";
+        if (numCorrect === allQuestions.length) {
+          resultsContainer.style.borderColor = "var(--success-green)";
+          resultsContainer.style.color = "var(--success-green)";
+        } else {
+          resultsContainer.style.borderColor = "var(--danger-red)";
+          resultsContainer.style.color = "var(--danger-red)";
+        }
+
+        // Toggle buttons
+        submitButton.style.display = "none";
+        submitButton.disabled = true;
+        restartButton.style.display = "block";
+
+        // Scroll to top to see results
+        window.scrollTo(0, 0);
+      }
+
+      // 5. RESTART THE QUIZ
+      function restartQuiz() {
+        // Clear score and results
+        resultsContainer.innerHTML = "";
+        resultsContainer.style.borderColor = "transparent";
+        resultsContainer.style.color = "inherit";
+
+        if (!allQuestionBlocks) {
+          allQuestionBlocks = document.querySelectorAll(".question-block");
+        }
+
+        allQuestionBlocks.forEach(function (questionBlock) {
+          // Remove explanation divs
+          var explanations = questionBlock.querySelectorAll(".explanation");
+          explanations.forEach(function (exp) {
+            exp.parentElement.removeChild(exp);
+          });
+
+          // Clear radio buttons
+          var radios = questionBlock.querySelectorAll('input[type="radio"]');
+          radios.forEach(function (radio) {
+            radio.checked = false;
+          });
+
+          // Clear list item styles
+          var lis = questionBlock.querySelectorAll(".options-list li");
+          lis.forEach(function (li) {
+            li.classList.remove(
+              "correct",
+              "incorrect",
+              "correct-answer-reveal"
+            );
+          });
+        });
+
+        // Toggle buttons
+        submitButton.style.display = "block";
+        submitButton.disabled = false;
+        restartButton.style.display = "none";
+
+        // Scroll to top
+        window.scrollTo(0, 0);
+      }
+
+      // 6. RUN THE QUIZ
+      buildQuiz();
+      submitButton.addEventListener("click", showResults);
+      restartButton.addEventListener("click", restartQuiz);
+    </script>
+  </body>
+</html>
